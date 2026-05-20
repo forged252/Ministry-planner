@@ -340,7 +340,7 @@ window.onerror = function(msg, src, line, col, err) {
     <div class="sec-lbl">Your Events</div>
     <div class="event-list" id="eventList"></div>
   </div>
-  <footer>Men's Ministry Planner . Works offline . Syncs to your NAS</footer>
+  <footer>Men's Ministry Planner . Works offline . Saves automatically to this browser</footer>
 </div>
 
 <!-- DETAIL -->
@@ -673,7 +673,7 @@ window.onerror = function(msg, src, line, col, err) {
       <div style="margin-top:16px"><button class="btn btn-green" style="width:100%" onclick="makePDF('summary')">? Export Completion Summary PDF</button></div>
     </div>
   </div>
-  <footer>Men's Ministry Planner . Offline-ready . Syncs to NAS</footer>
+  <footer>Men's Ministry Planner . Offline-ready . Saves automatically to this browser</footer>
 </div>
 
 <!-- NEW EVENT MODAL -->
@@ -772,8 +772,8 @@ function checkOnline() { setStatus(false); }
 
 function setStatus(online) {
   isOnline = online;
-  document.getElementById('dot').className = 'dot' + (online ? ' online' : '');
-  document.getElementById('sync-lbl').textContent = online ? 'Online' : 'Offline';
+  var dotEl = document.getElementById('dot'); if(dotEl) dotEl.className = 'dot' + (online ? ' online' : '');
+  var lblEl = document.getElementById('sync-lbl'); if(lblEl) lblEl.textContent = online ? 'Online' : 'Offline';
 }
 
 function pushToServer() { saveDB(); }
@@ -1072,7 +1072,7 @@ async function aiSummary(phaseNum, phaseName, btn) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 400,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -1420,7 +1420,7 @@ async function aiSummaryAndSave(phaseNum, phaseName, btn, saveToSnapshot) {
         'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 300,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -1512,7 +1512,7 @@ async function runAiSummary(phaseNum, phaseName, btn, callback) {
   if (ph) ph.querySelectorAll('.chi').forEach(function(chi){ checks.push((chi.querySelector('.chk').classList.contains('done')?'v ':'[ ] ')+chi.querySelector('.chl').textContent); });
   var prompt = "You are helping a men's ministry leader plan an event called \"" +ev.name+'". Summarize the '+phaseName+' in 2-3 sentences based on:\n\nCHECKLIST:\n'+checks.join('\n')+'\n\nDETAILS:\n'+(fieldContent||'Nothing filled in yet.')+'\n\nBe direct and practical. Speak to the event leader.';
   try {
-    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:250,messages:[{role:'user',content:prompt}]})});
+    var r = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:250,messages:[{role:'user',content:prompt}]})});
     var d = await r.json();
     var text = (d.content && d.content[0]) ? d.content[0].text : null;
     if (text) saveSnap(phaseNum, text);
